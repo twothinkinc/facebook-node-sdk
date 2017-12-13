@@ -2,7 +2,9 @@
 import Promise from 'any-promise';
 import {autobind} from 'core-decorators';
 import debug from 'debug';
-import request from 'request';
+import defaultsDeep from 'lodash.defaultsdeep';
+import FormData from 'form-data';
+import needle from 'needle';
 import URL from 'url';
 import QS from 'querystring';
 import crypto from 'crypto';
@@ -19,6 +21,8 @@ var {version} = require('../package.json'),
 		console.log(d); // eslint-disable-line no-console
 	},
 	defaultOptions = Object.assign(Object.create(null), {
+		onRequest: null,
+		requestOptions: {},
 		Promise: Promise,
 		accessToken: null,
 		appId: null,
@@ -76,16 +80,16 @@ var {version} = require('../package.json'),
 	},
 	postParamData = function(params) {
 		var data = {},
-			isFormData = false;
+			multipart = false;
 
 		for ( let key in params ) {
 			let value = params[key];
 			if ( value && typeof value !== 'string' ) {
 				let val = typeof value === 'object' && value::has('value') && value::has('options') ? value.value : value;
 				if ( Buffer.isBuffer(val) ) {
-					isFormData = true;
+					multipart = true;
 				} else if ( typeof val.read === 'function' && typeof val.pipe === 'function' && val.readable ) {
-					isFormData = true;
+					multipart = true;
 				} else {
 					value = JSON.stringify(value);
 				}
@@ -95,7 +99,20 @@ var {version} = require('../package.json'),
 			}
 		}
 
-		return {[isFormData ? 'formData' : 'form']: data};
+		if ( multipart ) {
+			const formData = new FormData();
+			for (const key in data) {
+				const value = data[key];
+				if ( typeof value === 'object' && value::has('value') && value::has('options') ) {
+					formData.append(key, value.value, value.options);
+				} else {
+					formData.append(key, value);
+				}
+			}
+			const formHeaders = formData.getHeaders();
+			return {data: formData, formHeaders};
+		}
+		return {data};
 	},
 	getAppSecretProof = function(accessToken, appSecret) {
 		var hmac = crypto.createHmac('sha256', appSecret);
@@ -317,12 +334,12 @@ class Facebook {
 	 * @param cb {Function}     the callback function to handle the response
 	 */
 	[oauthRequest](path, method, params, cb) {
-		var uri,
+		let uri,
 			parsedUri,
 			parsedQuery,
-			formOptions,
-			requestOptions,
-			pool;
+			postData,
+			formHeaders,
+			requestOptions;
 
 		cb = cb || function() {};
 		if ( !params.access_token ) {
@@ -356,7 +373,7 @@ class Facebook {
 				}
 			}
 
-			formOptions = postParamData(params);
+			({data: postData, formHeaders} = postParamData(params));
 		} else {
 			for ( let key in params ) {
 				parsedQuery[key] = params[key];
@@ -366,28 +383,26 @@ class Facebook {
 		parsedUri.search = stringifyParams(parsedQuery);
 		uri = URL.format(parsedUri);
 
-		pool = {maxSockets: this.options('maxSockets') || Number(process.env.MAX_SOCKETS) || 5};
-		requestOptions = {
-			method,
-			uri,
-			...formOptions,
-			pool
-		};
+		requestOptions = {parse: false};
 		if ( this.options('proxy') ) {
 			requestOptions['proxy'] = this.options('proxy');
 		}
 		if ( this.options('timeout') ) {
-			requestOptions['timeout'] = this.options('timeout');
+			requestOptions['response_timeout'] = this.options('timeout');
 		}
 		if ( this.options('userAgent') ) {
 			requestOptions['headers'] = {
-				'User-Agent': this.options('userAgent')
+				'User-Agent': this.options('userAgent'),
+				...formHeaders
 			};
 		}
-
 		debugReq(method.toUpperCase() + ' ' + uri);
-		request(requestOptions,
-			(error, response, body) => {
+		const request = needle.request(
+			method,
+			uri,
+			postData,
+			defaultsDeep(requestOptions, this.options('requestOptions')),
+			(error, response) => {
 				if ( error !== null ) {
 					if ( error === Object(error) && error::has('error') ) {
 						return cb(error);
@@ -411,7 +426,7 @@ class Facebook {
 
 				let json;
 				try {
-					json = JSON.parse(body);
+					json = JSON.parse(response.body);
 				} catch (ex) {
 					// sometimes FB is has API errors that return HTML and a message
 					// of "Sorry, something went wrong". These are infrequent and unpredictable but
@@ -424,7 +439,10 @@ class Facebook {
 					};
 				}
 				cb(json);
-			});
+			}).request;
+		if ( this.options('onRequest') ) {
+			this.options('onRequest')(request);
+		}
 	}
 
 	/**

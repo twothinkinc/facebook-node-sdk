@@ -110,7 +110,7 @@ FB.api('me/photos', 'post', { source: fs.createReadStream('my-vacation.jpg'), ca
   console.log('Post Id: ' + res.post_id);
 });
 
-FB.api('me/photos', 'post', { source: { value: photoBuffer, options: { filename:"upload.jpg", contentType: 'image/jpeg' } }, caption: 'My vacation' }, function (res) {
+FB.api('me/photos', 'post', { source: { value: photoBuffer, options: { filename: 'upload.jpg', contentType: 'image/jpeg' } }, caption: 'My vacation' }, function (res) {
   if(!res || res.error) {
     console.log(!res ? 'error occurred' : res.error);
     return;

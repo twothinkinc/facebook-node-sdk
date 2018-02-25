@@ -19,7 +19,7 @@ npm install fb
 var FB = require('fb');
 
 // Using require() in ES2015
-var {FB, FacebookApiException} = require('fb');
+const {FB, FacebookApiException} = require('fb');
 
 // Using ES2015 import through Babel
 import FB from 'fb'; // or,
@@ -36,12 +36,12 @@ var FB = require('fb'),
     fb = new FB.Facebook(options);
 
 // ES2015 w/ require()
-var {Facebook, FacebookApiException} = require('fb'),
-    fb = new Facebook(options);
+const {Facebook, FacebookApiException} = require('fb'),
+const fb = new Facebook(options);
 
 // ES2015 w/ import through Babel
 import {Facebook, FacebookApiException} from 'fb';
-var fb = new Facebook(options);
+const fb = new Facebook(options);
 ```
 
 ## Multi-app usage

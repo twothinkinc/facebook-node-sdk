@@ -32,7 +32,8 @@ var {version} = require('../package.json'),
 		scope: null,
 		redirectUri: null,
 		proxy: null,
-		userAgent: `thuzi_nodejssdk/${version}`
+		userAgent: `thuzi_nodejssdk/${version}`,
+		agent: null,
 	}),
 	emptyRateLimit = Object.assign(Object.create(null), {
 		callCount: 0,
@@ -400,6 +401,10 @@ class Facebook {
 				...formHeaders
 			};
 		}
+		if ( this.options('agent') ) {
+			requestOptions['agent'] = this.options('agent');
+		}
+
 		debugReq(method.toUpperCase() + ' ' + uri);
 		needle.request(
 			method,

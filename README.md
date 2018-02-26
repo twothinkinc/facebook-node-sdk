@@ -19,7 +19,7 @@ npm install fb
 var FB = require('fb');
 
 // Using require() in ES2015
-var {FB, FacebookApiException} = require('fb');
+const {FB, FacebookApiException} = require('fb');
 
 // Using ES2015 import through Babel
 import FB from 'fb'; // or,
@@ -36,12 +36,12 @@ var FB = require('fb'),
     fb = new FB.Facebook(options);
 
 // ES2015 w/ require()
-var {Facebook, FacebookApiException} = require('fb'),
-    fb = new Facebook(options);
+const {Facebook, FacebookApiException} = require('fb'),
+const fb = new Facebook(options);
 
 // ES2015 w/ import through Babel
 import {Facebook, FacebookApiException} from 'fb';
-var fb = new Facebook(options);
+const fb = new Facebook(options);
 ```
 
 ## Multi-app usage
@@ -110,7 +110,7 @@ FB.api('me/photos', 'post', { source: fs.createReadStream('my-vacation.jpg'), ca
   console.log('Post Id: ' + res.post_id);
 });
 
-FB.api('me/photos', 'post', { source: { value: photoBuffer, options: { contentType: 'image/jpeg' } }, caption: 'My vacation' }, function (res) {
+FB.api('me/photos', 'post', { source: { value: photoBuffer, options: { filename: 'upload.jpg', contentType: 'image/jpeg' } }, caption: 'My vacation' }, function (res) {
   if(!res || res.error) {
     console.log(!res ? 'error occurred' : res.error);
     return;
@@ -538,6 +538,10 @@ FB.api('/me', function (res) {
     }
 });
 ```
+
+### Debugging
+
+If you need to submit a bug report to Facebook you can run your application with `DEBUG=fb:req,fb:fbdebug` and request information will be output to your console along with `x-fb-trace-id`, `x-fb-rev`, and `x-fb-debug` headers you can include.
 
 ## Promise based interface
 

@@ -13,12 +13,13 @@ import FacebookApiException from './FacebookApiException';
 var {version} = require('../package.json'),
 	debugReq = debug('fb:req'),
 	debugSig = debug('fb:sig'),
+	debugFbDebug = debug('fb:fbdebug'),
 	METHODS = ['get', 'post', 'delete', 'put'],
 	toString = Object.prototype.toString,
 	has = Object.prototype.hasOwnProperty,
 	log = function(d) {
 		// todo
-		console.log(d); // eslint-disable-line no-console
+		console.warn(d); // eslint-disable-line no-console
 	},
 	defaultOptions = Object.assign(Object.create(null), {
 		onRequest: null,
@@ -29,7 +30,7 @@ var {version} = require('../package.json'),
 		appSecret: null,
 		appSecretProof: null,
 		beta: false,
-		version: 'v2.3',
+		version: 'v2.5',
 		timeout: null,
 		scope: null,
 		redirectUri: null,
@@ -65,6 +66,12 @@ var {version} = require('../package.json'),
 	},
 	stringifyParams = function(params) {
 		var data = {};
+
+		// https://developers.facebook.com/bugs/1925316137705574/
+		// fields=[] as json is not officialy supported, however the README has made people mistakenly do so
+		if ( Array.isArray(params.fields) ) {
+			log(`The fields param should be a comma separated list, not an array, try changing it to: ${JSON.stringify(params.fields)}.join(',')`);
+		}
 
 		for ( let key in params ) {
 			let value = params[key];
@@ -409,6 +416,10 @@ class Facebook {
 					}
 					return cb({error});
 				}
+
+				debugFbDebug(`x-fb-trace-id: ${response.headers['x-fb-trace-id']}`);
+				debugFbDebug(`x-fb-rev: ${response.headers['x-fb-rev']}`);
+				debugFbDebug(`x-fb-debug: ${response.headers['x-fb-debug']}`);
 
 				let appUsage = parseResponseHeaderAppUsage(response.headers);
 				if ( appUsage !== null ) {

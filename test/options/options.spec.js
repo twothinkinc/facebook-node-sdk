@@ -78,7 +78,7 @@ describe('FB.options', function() {
 		});
 
 		it('Should make use graph.facebook when beta is false', function(done) {
-			var expectedRequest = nock('https://graph.facebook.com:443').get('/v2.3/4').reply(200, {});
+			var expectedRequest = nock('https://graph.facebook.com:443').get('/v2.5/4').reply(200, {});
 
 			FB.options({beta: false});
 
@@ -91,7 +91,7 @@ describe('FB.options', function() {
 		});
 
 		it('Should make use graph.beta.facebook when beta is true', function(done) {
-			var expectedRequest = nock('https://graph.beta.facebook.com:443').get('/v2.3/4').reply(200, {});
+			var expectedRequest = nock('https://graph.beta.facebook.com:443').get('/v2.5/4').reply(200, {});
 
 			FB.options({beta: true});
 
@@ -107,7 +107,7 @@ describe('FB.options', function() {
 	describe('userAgent', function() {
 		beforeEach(function() {
 			nock('https://graph.facebook.com:443')
-				.get('/v2.3/4')
+				.get('/v2.5/4')
 				.reply(function() {
 					return {
 						userAgent: this.req.headers['user-agent']
@@ -119,33 +119,37 @@ describe('FB.options', function() {
 			expect(FB.options('userAgent')).to.equal('thuzi_nodejssdk/' + version);
 		});
 
-		it('Should default the userAgent for FB.api requests to thuzi_nodejssdk/' + version, function() {
+		it('Should default the userAgent for FB.api requests to thuzi_nodejssdk/' + version, function(done) {
 			FB.api('/4', function(result) {
 				notError(result);
 				expect(result.userAgent).to.equal('thuzi_nodejssdk/' + version);
+
+				done();
 			});
 		});
 
-		it('Should be used as the userAgent for FB.api requests', function() {
+		it('Should be used as the userAgent for FB.api requests', function(done) {
 			FB.options({userAgent: 'faux/0.0.1'});
 
 			FB.api('/4', function(result) {
 				notError(result);
 				expect(result.userAgent).to.equal('faux/0.0.1');
+
+				done();
 			});
 		});
 	});
 
 	describe('version', function() {
-		it('Should default version to v2.3', function() {
-			expect(FB.options('version')).to.equal('v2.3');
+		it('Should default version to v2.5', function() {
+			expect(FB.options('version')).to.equal('v2.5');
 		});
 
 		it('Should change the version used in FB.api requests', function(done) {
-			FB.options({version: 'v2.4'});
+			FB.options({version: 'v2.9'});
 
 			var expectedRequest = nock('https://graph.facebook.com:443')
-				.get('/v2.4/4')
+				.get('/v2.9/4')
 				.reply(200, {
 					id: '4',
 					name: 'Mark Zuckerberg',
@@ -163,11 +167,11 @@ describe('FB.options', function() {
 			});
 		});
 
-		it("Should not prepend a version to FB.api('/v2.3/4', cb) style requests", function(done) {
-			FB.options({version: 'v2.4'});
+		it("Should not prepend a version to FB.api('/v2.12/4', cb) style requests", function(done) {
+			FB.options({version: 'v2.9'});
 
 			var expectedRequest = nock('https://graph.facebook.com:443')
-				.get('/v2.3/4')
+				.get('/v2.12/4')
 				.reply(200, {
 					id: '4',
 					name: 'Mark Zuckerberg',
@@ -178,7 +182,7 @@ describe('FB.options', function() {
 					locale: 'en_US'
 				});
 
-			FB.api('/v2.3/4', function(result) {
+			FB.api('/v2.12/4', function(result) {
 				notError(result);
 				expectedRequest.done();
 				done();
@@ -186,9 +190,9 @@ describe('FB.options', function() {
 		});
 
 		it('Should change the version used in FB.getLoginUrl', function() {
-			FB.options({version: 'v2.4'});
+			FB.options({version: 'v2.9'});
 			expect(FB.getLoginUrl({appId: 'app_id'}))
-				.to.equal('https://www.facebook.com/v2.4/dialog/oauth?response_type=code&redirect_uri=https%3A%2F%2Fwww.facebook.com%2Fconnect%2Flogin_success.html&client_id=app_id');
+				.to.equal('https://www.facebook.com/v2.9/dialog/oauth?response_type=code&redirect_uri=https%3A%2F%2Fwww.facebook.com%2Fconnect%2Flogin_success.html&client_id=app_id');
 		});
 	});
 });

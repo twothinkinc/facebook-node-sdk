@@ -1,18 +1,22 @@
 language: node_js
 node_js:
-  - "7"
+  - "9"
+  - "8"
   - "6"
-  - "5"
   - "4"
 env:
   global:
     - CI_TEST=no-lint
 matrix:
   include:
-    - node_js: "7"
+    - node_js: "9"
       script: npm run lint
       env:
         - CI_TEST=lint-only
+    - node_js: "9"
+      script: npm run test-live
+      env:
+        - CI_TEST=test-live
 cache:
   directories:
     - node_modules

@@ -2,7 +2,6 @@
 import Promise from 'any-promise';
 import {autobind} from 'core-decorators';
 import debug from 'debug';
-import defaultsDeep from 'lodash.defaultsdeep';
 import FormData from 'form-data';
 import needle from 'needle';
 import URL from 'url';
@@ -22,8 +21,6 @@ var {version} = require('../package.json'),
 		console.warn(d); // eslint-disable-line no-console
 	},
 	defaultOptions = Object.assign(Object.create(null), {
-		onRequest: null,
-		requestOptions: {},
 		Promise: Promise,
 		accessToken: null,
 		appId: null,
@@ -404,11 +401,11 @@ class Facebook {
 			};
 		}
 		debugReq(method.toUpperCase() + ' ' + uri);
-		const request = needle.request(
+		needle.request(
 			method,
 			uri,
 			postData,
-			defaultsDeep(requestOptions, this.options('requestOptions')),
+			requestOptions,
 			(error, response) => {
 				if ( error !== null ) {
 					if ( error === Object(error) && error::has('error') ) {
@@ -450,10 +447,7 @@ class Facebook {
 					};
 				}
 				cb(json);
-			}).request;
-		if ( this.options('onRequest') ) {
-			this.options('onRequest')(request);
-		}
+			});
 	}
 
 	/**

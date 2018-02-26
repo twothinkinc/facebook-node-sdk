@@ -17,7 +17,7 @@ var {version} = require('../package.json'),
 	has = Object.prototype.hasOwnProperty,
 	log = function(d) {
 		// todo
-		console.log(d); // eslint-disable-line no-console
+		console.warn(d); // eslint-disable-line no-console
 	},
 	defaultOptions = Object.assign(Object.create(null), {
 		Promise: Promise,
@@ -62,6 +62,12 @@ var {version} = require('../package.json'),
 	},
 	stringifyParams = function(params) {
 		var data = {};
+
+		// https://developers.facebook.com/bugs/1925316137705574/
+		// fields=[] as json is not officialy supported, however the README has made people mistakenly do so
+		if ( Array.isArray(params.fields) ) {
+			log(`The fields param should be a comma separated list, not an array, try changing it to: ${JSON.stringify(params.fields)}.join(',')`);
+		}
 
 		for ( let key in params ) {
 			let value = params[key];

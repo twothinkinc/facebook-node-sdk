@@ -21,7 +21,7 @@
     "object-curly-spacing": [1, "never"],
     "prefer-arrow-callback": [1],
     "quote-props": [2, "as-needed"],
-    "quotes": [1, "single", "avoid-escape"],
+    "quotes": [1, "single", {"avoidEscape": true, "allowTemplateLiterals": true}],
     "semi": [2, "always"],
     "spaced-comment": [2, "always"],
     "keyword-spacing": [1, {"before": true, "after": true}],

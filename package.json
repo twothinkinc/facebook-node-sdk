@@ -19,6 +19,7 @@
   },
   "main": "./lib/index.js",
   "scripts": {
+    "precommit": "lint-staged",
     "lint": "eslint .",
     "build": "babel src/ -d lib/",
     "buildw": "babel -w src/ -d lib/",
@@ -46,6 +47,8 @@
     "chai-as-promised": "^7.1.1",
     "dotenv": "^5.0.0",
     "eslint": "^3.19.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.0",
     "lodash.omit": "^4.5.0",
     "mocha": "^3.2.0",
     "mocha-eslint": "^3.0.1",
@@ -53,5 +56,10 @@
   },
   "engines": {
     "node": ">=4"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint"
+    ]
   }
 }

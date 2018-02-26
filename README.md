@@ -433,6 +433,7 @@ The existing options are:
 * `'appSecret'` string representing the Facebook application secret.
 * `'version'` [default=`'v2.3'`] string representing the Facebook api version to use. Defaults to the oldest available version of the api.
 * `'proxy'` string representing an HTTP proxy to be used. Support proxy Auth with Basic Auth, embedding the auth info in the uri: 'http://[username:password@]proxy[:port]' (parameters in brackets are optional).
+* `'agent'` a custom `https.Agent` to use for the request.
 * `'timeout'` integer number of milliseconds to wait for a response. Requests that have not received a response in *X* ms. If set to null or 0 no timeout will exist. On timeout an error object will be returned to the api callback with the error code of `'ETIMEDOUT'` (example below).
 * `'scope'` string representing the Facebook scope to use in `getLoginUrl`.
 * `'redirectUri'` string representing the Facebook redirect_uri to use in `getLoginUrl`.

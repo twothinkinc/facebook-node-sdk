@@ -1,6 +1,14 @@
 Changelog
 =========
 
+## 3.0.0
+
+* Added `getAppUsage` API
+* New minimum API version `v2.5` (v2.4 is no longer available)
+* Debug headers are now logged with DEBUG=fb:fbdebug
+* Log messages to stderr using console.warn instead of console.log
+* **BREAKING CHANGE**: Switched from the `request` library to `needle`
+
 ## 2.0.0
 
 * **BREAKING CHANGE**: Dropped support for FQL and Legacy REST Api

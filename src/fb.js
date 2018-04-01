@@ -14,8 +14,8 @@ var {version} = require('../package.json'),
 	debugSig = debug('fb:sig'),
 	debugFbDebug = debug('fb:fbdebug'),
 	METHODS = ['get', 'post', 'delete', 'put'],
-	toString = Object.prototype.toString,
-	has = Object.prototype.hasOwnProperty,
+	isString = (self, ...args) => Object.prototype.toString.call(self, ...args) === '[object String]',
+	has = (self, ...args) => Object.prototype.hasOwnProperty.call(self, ...args),
 	log = function(d) {
 		// todo
 		console.warn(d); // eslint-disable-line no-console
@@ -41,16 +41,16 @@ var {version} = require('../package.json'),
 		totalCPUTime: 0
 	}),
 	isValidOption = function(key) {
-		return defaultOptions::has(key);
+		return has(defaultOptions, key);
 	},
 	parseResponseHeaderAppUsage = function(header) {
-		if ( !header::has('x-app-usage') ) {
+		if ( !has(header, 'x-app-usage') ) {
 			return null;
 		}
 		return JSON.parse(header['x-app-usage']);
 	},
 	parseResponseHeaderPageUsage = function(header) {
-		if ( !header::has('x-page-usage') ) {
+		if ( !has(header, 'x-page-usage') ) {
 			return null;
 		}
 		return JSON.parse(header['x-page-usage']);
@@ -90,7 +90,7 @@ var {version} = require('../package.json'),
 		for ( let key in params ) {
 			let value = params[key];
 			if ( value && typeof value !== 'string' ) {
-				let val = typeof value === 'object' && value::has('value') && value::has('options') ? value.value : value;
+				let val = typeof value === 'object' && has(value, 'value') && has(value, 'options') ? value.value : value;
 				if ( Buffer.isBuffer(val) ) {
 					multipart = true;
 				} else if ( typeof val.read === 'function' && typeof val.pipe === 'function' && val.readable ) {
@@ -108,7 +108,7 @@ var {version} = require('../package.json'),
 			const formData = new FormData();
 			for (const key in data) {
 				const value = data[key];
-				if ( typeof value === 'object' && value::has('value') && value::has('options') ) {
+				if ( typeof value === 'object' && has(value, 'value') && has(value, 'options') ) {
 					formData.append(key, value.value, value.options);
 				} else {
 					formData.append(key, value);
@@ -307,8 +307,7 @@ class Facebook {
 			} else if ( type === 'object' && !params ) {
 				params = next;
 			} else {
-				log('Invalid argument passed to FB.api(): ' + next);
-				return;
+				throw new TypeError('Invalid argument passed to FB.api(): ' + next);
 			}
 			next = args.shift();
 		}
@@ -322,8 +321,7 @@ class Facebook {
 		}
 
 		if ( METHODS.indexOf(method) < 0 ) {
-			log('Invalid method passed to FB.api(): ' + method);
-			return;
+			throw new TypeError('Invalid method passed to FB.api(): ' + method);
 		}
 
 		this[oauthRequest](path, method, params, cb);
@@ -413,7 +411,7 @@ class Facebook {
 			requestOptions,
 			(error, response) => {
 				if ( error !== null ) {
-					if ( error === Object(error) && error::has('error') ) {
+					if ( error === Object(error) && has(error, 'error') ) {
 						return cb(error);
 					}
 					return cb({error});
@@ -510,7 +508,7 @@ class Facebook {
 			return;
 		}
 
-		if ( !(envelope && envelope::has('algorithm') && envelope.algorithm.toUpperCase() === 'HMAC-SHA256') ) {
+		if (!(envelope && has(envelope, 'algorithm') && envelope.algorithm.toUpperCase() === 'HMAC-SHA256') ) {
 			debugSig(envelope.algorithm + ' is not a supported algorithm, must be one of [HMAC-SHA256]');
 			return;
 		}
@@ -582,11 +580,11 @@ class Facebook {
 		if ( !keyOrOptions ) {
 			return o;
 		}
-		if ( keyOrOptions::toString() === '[object String]' ) {
+		if ( isString(keyOrOptions) ) {
 			return isValidOption(keyOrOptions) && keyOrOptions in o ? o[keyOrOptions] : null;
 		}
 		for ( let key in o ) {
-			if ( isValidOption(key) && key in o && keyOrOptions::has(key) ) {
+			if ( isValidOption(key) && key in o && has(keyOrOptions, key) ) {
 				o[key] = keyOrOptions[key];
 				switch (key) {
 				case 'appSecret':

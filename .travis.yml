@@ -19,3 +19,5 @@ matrix:
 cache:
   directories:
     - node_modules
+notifications:
+  webhooks: https://app.fossa.io/hooks/travisci

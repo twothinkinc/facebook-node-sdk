@@ -1,4 +1,4 @@
-# NodeJS Library for Facebook [![Build Status](https://travis-ci.org/node-facebook/facebook-node-sdk.svg?branch=master)](https://travis-ci.org/node-facebook/facebook-node-sdk)
+# NodeJS Library for Facebook [![Build Status](https://travis-ci.org/node-facebook/facebook-node-sdk.svg?branch=master)](https://travis-ci.org/node-facebook/facebook-node-sdk) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnode-facebook%2Ffacebook-node-sdk.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnode-facebook%2Ffacebook-node-sdk?ref=badge_shield)
 
 With facebook-node-sdk you can now easily write the same code and share between your server (nodejs) and the client ([Facebook Javascript SDK](https://developers.facebook.com/docs/reference/javascript/)).
 
@@ -675,3 +675,7 @@ Step(
     }
 );
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnode-facebook%2Ffacebook-node-sdk.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnode-facebook%2Ffacebook-node-sdk?ref=badge_large)

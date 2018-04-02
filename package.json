@@ -28,7 +28,6 @@
     "prepublish": "npm run build"
   },
   "dependencies": {
-    "any-promise": "^1.3.0",
     "babel-runtime": "^6.23.0",
     "core-decorators": "^0.17.0",
     "debug": "^2.6.3",
@@ -58,7 +57,7 @@
     "sinon-chai": "^2.14.0"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "lint-staged": {
     "*.js": [

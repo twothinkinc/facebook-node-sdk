@@ -1,5 +1,4 @@
 'use strict';
-import Promise from 'any-promise';
 import {autobind} from 'core-decorators';
 import debug from 'debug';
 import FormData from 'form-data';

@@ -136,6 +136,20 @@ describe('FB.api', function() {
 			});
 		});
 
+		describe("FB.api('/', { yes: true, no: false }), cb)", function() {
+			it('should serialize boolean parameter values to true/false strings ?yes=true&no=false', function(done) {
+				nock('https://graph.facebook.com:443')
+					.get('/v2.5/4?yes=true&no=false')
+					.reply(200, {
+					});
+
+				FB.api('4', {yes: true, no: false}, function(result) {
+					notError(result);
+					done();
+				});
+			});
+		});
+
 		describe("FB.api('/', { object: { a: false, b: 2, c: 'cat' } }), cb)", function() {
 			it('should serialize object parameter values to json ?object={"a":false,"b":2,"c":"cat"}', function(done) {
 				nock('https://graph.facebook.com:443')

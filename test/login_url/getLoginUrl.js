@@ -1,7 +1,7 @@
 'use strict';
 var nock = require('nock'),
 	expect = require('chai').expect,
-	FB = require('../..'),
+	FB = require('../..').default,
 	omit = require('lodash.omit'),
 	defaultOptions = omit(FB.options(), 'appId');
 

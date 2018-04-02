@@ -12,6 +12,7 @@ Changelog
 * Use of the [function-bind operator](https://github.com/tc39/proposal-bind-operator) has been removed
 * **BREAKING CHANGE**: Raised the minimum supported version of Node to `6.x`
 * **BREAKING CHANGE**: `any-promise` has been removed, native promises are now returned by default. If you wish to use a 3rd party promise library like `bluebird` you must explicitly set the `Promise` option instead of relying on `any-promise`'s behaviour
+* * **BREAKING CHANGE**: CommonJS `require('fb')` must now use the `.default` or `.FB` export
 
 ## 2.0.0
 

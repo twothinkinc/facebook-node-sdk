@@ -8,6 +8,7 @@ Changelog
 * Debug headers are now logged with DEBUG=fb:fbdebug
 * Log messages to stderr using console.warn instead of console.log
 * **BREAKING CHANGE**: Switched from the `request` library to `needle`
+* Use of the [function-bind operator](https://github.com/tc39/proposal-bind-operator) has been removed
 
 ## 2.0.0
 

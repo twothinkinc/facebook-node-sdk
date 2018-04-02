@@ -3,7 +3,7 @@ var Bluebird = require('bluebird'),
 	nock = require('nock'),
 	expect = require('chai').expect,
 	notError = require('../_supports/notError'),
-	FB = require('../..'),
+	{FB, Facebook} = require('../..'),
 	omit = require('lodash.omit'),
 	defaultOptions = omit(FB.options(), 'appId');
 
@@ -344,7 +344,7 @@ describe('FB.api', function() {
 						locale: 'en_US'
 					});
 
-				var fb = new FB.Facebook({Promise: Bluebird});
+				var fb = new Facebook({Promise: Bluebird});
 				var ret = fb.api('/4');
 
 				expect(ret).to.have.property('then').that.is.a('function');

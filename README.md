@@ -15,15 +15,14 @@ npm install fb
 ```
 
 ```js
-// Using require() in ES5
-var FB = require('fb');
+// Using ES2015 import
+import FB, {FacebookApiException} from 'fb';
 
 // Using require() in ES2015
 const {FB, FacebookApiException} = require('fb');
 
-// Using ES2015 import through Babel
-import FB from 'fb'; // or,
-import {FB, FacebookApiException} from 'fb';
+// Using require() in ES5
+var FB = require('fb').default;
 ```
 
 ## Library usage
@@ -31,17 +30,17 @@ import {FB, FacebookApiException} from 'fb';
 Libraries can isolate themselves from the options belonging to the default `FB` by creating an instance of the `Facebook` class.
 
 ```js
-// ES5
-var FB = require('fb'),
-    fb = new FB.Facebook(options);
+// ES2015 modules
+import {Facebook, FacebookApiException} from 'fb';
+const fb = new Facebook(options);
 
 // ES2015 w/ require()
 const {Facebook, FacebookApiException} = require('fb'),
 const fb = new Facebook(options);
 
-// ES2015 w/ import through Babel
-import {Facebook, FacebookApiException} from 'fb';
-const fb = new Facebook(options);
+// ES5
+var Facebook = require('fb').Facebook,
+    fb = new Facebook(options);
 ```
 
 ## Multi-app usage
@@ -549,19 +548,6 @@ If you need to submit a bug report to Facebook you can run your application with
 When `FB.api` is called without a callback it will instead return a Promise that will either resolve with the same response as `FB.api` or be rejected with a `FacebookApiException` error.
 
 ```js
-FB.api('4')
-    .then(function(response) {
-        console.log(response);
-    })
-    .catch(function(error) {
-        if(error.response.error.code === 'ETIMEDOUT') {
-            console.log('request timeout');
-        }
-        else {
-            console.log('error', error.message);
-        }
-    });
-
 // In an async function
 async function example() {
     try {
@@ -577,6 +563,20 @@ async function example() {
         }
     }
 }
+
+// Using plain promise callbacks
+FB.api('4')
+    .then((response) => {
+        console.log(response);
+    })
+    .catch((error) => {
+        if(error.response.error.code === 'ETIMEDOUT') {
+            console.log('request timeout');
+        }
+        else {
+            console.log('error', error.message);
+        }
+    });
 ```
 
 The promise implementation used can be controlled using [any-promise](https://www.npmjs.com/package/any-promise)'s register interface or by setting the `Promise` option.
@@ -636,7 +636,7 @@ npm install step
 ### FB.api with Step
 
 ```js
-var FB      = require('fb'),
+var FB      = require('fb').default,
     Step    = require('step');
 
 Step(
@@ -662,7 +662,7 @@ Step(
 Simplified version of facebook-node-sdk async callbacks using `FB.napi`.
 
 ```js
-var FB      = require('fb'),
+var FB      = require('fb').default,
     Step    = require('step');
 
 Step(
@@ -675,7 +675,6 @@ Step(
     }
 );
 ```
-
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnode-facebook%2Ffacebook-node-sdk.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnode-facebook%2Ffacebook-node-sdk?ref=badge_large)

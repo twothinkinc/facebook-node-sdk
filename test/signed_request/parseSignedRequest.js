@@ -1,6 +1,6 @@
 'use strict';
 var expect = require('chai').expect,
-	FB = require('../..'),
+	FB = require('../..').default,
 	omit = require('lodash.omit'),
 	defaultOptions = omit(FB.options(), 'appId'),
 	signature = 'U0_O1MqqNKUt32633zAkdd2Ce-jGVgRgJeRauyx_zC8',

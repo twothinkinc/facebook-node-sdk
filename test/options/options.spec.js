@@ -1,5 +1,5 @@
 'use strict';
-var FB = require('../..'),
+var FB = require('../..').default,
 	nock = require('nock'),
 	expect = require('chai').expect,
 	notError = require('../_supports/notError'),

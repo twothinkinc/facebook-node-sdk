@@ -1,19 +1,19 @@
 'use strict';
-var FB = require('../..'),
+var FBmodule = require('../..'),
 	FacebookApiException = require('../../lib/FacebookApiException').default,
 	{version} = require('../../package.json'),
 	expect = require('chai').expect;
 
-describe('FB.FacebookApiException', function() {
+describe('exports.FacebookApiException', function() {
 	it('should be a function', function() {
-		expect(FB.FacebookApiException)
+		expect(FBmodule.FacebookApiException)
 			.to.exist
 			.and.to.be.a('function');
 	});
 
 	it('should create a FacebookApiException instance that derives from Error', function() {
 		var obj = {};
-		expect(new FB.FacebookApiException(obj))
+		expect(new FBmodule.FacebookApiException(obj))
 			.to.be.an.instanceof(FacebookApiException)
 			.and.to.be.an.instanceof(Error)
 			.and.to.include({
@@ -24,9 +24,9 @@ describe('FB.FacebookApiException', function() {
 	});
 });
 
-describe('FB.version', function() {
+describe('exports.version', function() {
 	it("should be a string with this package's current version", function() {
-		expect(FB.version)
+		expect(FBmodule.version)
 			.to.be.a('string')
 			.and.to.equal(version);
 	});

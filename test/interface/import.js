@@ -62,7 +62,7 @@ describe('import', function() {
 	});
 
 	describe("import {FacebookApiException} from 'fb';", function() {
-		it('should expose the FacebookApiException eror typei', function() {
+		it('should expose the FacebookApiException error type', function() {
 			expect(FacebookApiExceptionImport).to.equal(FacebookApiException);
 		});
 	});

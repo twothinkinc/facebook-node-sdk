@@ -11,7 +11,7 @@ describe('FB.FacebookApiException', function() {
 			.and.to.be.a('function');
 	});
 
-	it('should create a FacebookApiExceptionn instance that derives from Error', function() {
+	it('should create a FacebookApiException instance that derives from Error', function() {
 		var obj = {};
 		expect(new FB.FacebookApiException(obj))
 			.to.be.an.instanceof(FacebookApiException)

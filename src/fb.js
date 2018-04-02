@@ -307,7 +307,8 @@ class Facebook {
 			} else if ( type === 'object' && !params ) {
 				params = next;
 			} else {
-				throw new TypeError('Invalid argument passed to FB.api(): ' + next);
+				log('Invalid argument passed to FB.api(): ' + next);
+				return;
 			}
 			next = args.shift();
 		}
@@ -321,7 +322,8 @@ class Facebook {
 		}
 
 		if ( METHODS.indexOf(method) < 0 ) {
-			throw new TypeError('Invalid method passed to FB.api(): ' + method);
+			log('Invalid method passed to FB.api(): ' + method);
+			return;
 		}
 
 		this[oauthRequest](path, method, params, cb);

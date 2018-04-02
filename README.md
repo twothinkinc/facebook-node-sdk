@@ -579,20 +579,16 @@ FB.api('4')
     });
 ```
 
-The promise implementation used can be controlled using [any-promise](https://www.npmjs.com/package/any-promise)'s register interface or by setting the `Promise` option.
+The promises returned are native Promises. However you can override the promise implementation used with a 3rd party library by setting the `Promise` option.
 
 ```js
-// any-promise
-import 'any-promise/register/bluebird';
-import FB from 'fb';
-let response = await FB.api('4');
-
 // Promise option
 import FB from 'fb';
+
 FB.options({
     Promise: require('bluebird')
 });
-let response = await fb.api('4');
+let response = await FB.api('4');
 
 // Promise option in a library
 import {Facebook} from 'fb';

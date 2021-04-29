@@ -17,7 +17,7 @@
     "type": "git",
     "url": "https://github.com/node-facebook/facebook-node-sdk.git"
   },
-  "main": "./lib/fb.js",
+  "main": "./src/fb.js",
   "scripts": {
     "precommit": "lint-staged",
     "lint": "eslint .",

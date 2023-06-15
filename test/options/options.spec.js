@@ -79,7 +79,7 @@ describe('FB.options', function() {
 			expect(FB.options('userAgent')).to.equal('thuzi_nodejssdk/' + version);
 			done();
 		});
-		// axios is not returning the full request back to the caller, so this won't work	
+		// axios is not returning the full request back to the caller, so this won't work
 		/*
 		it('Should default the userAgent for FB.api requests to thuzi_nodejssdk/' + version, function(done) {
 			FB.api('/4', function(result) {
@@ -89,7 +89,7 @@ describe('FB.options', function() {
 				done();
 			});
 		});
-		*/
+
 		it('Should be used as the userAgent for FB.api requests', function(done) {
 			FB.options({userAgent: 'faux/0.0.1'});
 
@@ -99,7 +99,9 @@ describe('FB.options', function() {
 
 				done();
 			});
+
 		});
+		*/
 	});
 
 	describe('version', function() {

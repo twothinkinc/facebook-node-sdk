@@ -157,6 +157,7 @@ class Facebook {
 
 		this._pageUsage = Object.create(emptyRateLimit);
 		this._appUsage = Object.create(emptyRateLimit);
+		this.version = version;
 	}
 
 	/**

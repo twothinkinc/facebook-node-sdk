@@ -1,11 +1,11 @@
 'use strict';
-import { expect } from '../_supports/chai';
-import FB, { FacebookApiException } from '../_supports/fb';
+import {expect} from '../_supports/chai';
+import FB, {FacebookApiException} from '../_supports/fb';
 import sinon from 'sinon';
 
-describe('error', function () {
-	describe("FB.api('/404')", function () {
-		it('should throw a FacebookApiException', async function () {
+describe('error', function() {
+	describe("FB.api('/404')", function() {
+		it('should throw a FacebookApiException', async function() {
 			const res = FB.api('/404');
 			await expect(res).to.eventually.be.rejectedWith(FacebookApiException);
 			await expect(res).to.eventually.be.rejected
@@ -16,17 +16,17 @@ describe('error', function () {
 		});
 	});
 
-	describe("FB.api('/me', {fields: ['id', 'name']})", function () {
-		beforeEach(function () {
+	describe("FB.api('/me', {fields: ['id', 'name']})", function() {
+		beforeEach(function() {
 			sinon.spy(console, 'warn');
 		});
 
-		afterEach(function () {
+		afterEach(function() {
 			console.warn.restore(); // eslint-disable-line no-console
 		});
 
-		it('should emit a warning when fields is an array', async function () {
-			await FB.api('/me', { fields: ['id', 'name'] });
+		it('should emit a warning when fields is an array', async function() {
+			await FB.api('/me', {fields: ['id', 'name']});
 			expect(console.warn).to.have.been.calledWith( // eslint-disable-line no-console
 				`The fields param should be a comma separated list, not an array, try changing it to: ["id","name"].join(',')`
 			);

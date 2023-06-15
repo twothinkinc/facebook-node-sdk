@@ -1,20 +1,25 @@
 'use strict';
-import FBdefault, {FB, FacebookApiException as FacebookApiExceptionImport} from '../..';
-var FacebookApiException = require('../../lib/FacebookApiException').default,
-	nock = require('nock'),
-	expect = require('chai').expect,
-	notError = require('../_supports/notError'),
-	omit = require('lodash.omit'),
-	defaultOptions = omit(FB.options(), 'appId');
+const {Facebook, FacebookApiException} = require('../..');
+
+'use strict';
+var nock = require('nock');
+var	expect = require('chai').expect;
+var notError = require('../_supports/notError');
+var omit = require('lodash.omit');
 
 nock.disableNetConnect();
 
+let FB;
+
 beforeEach(function() {
+	FB = new Facebook({ version: 'v10.0' });
+	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
 
 afterEach(function() {
 	nock.cleanAll();
+	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
 

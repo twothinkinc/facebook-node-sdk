@@ -1,6 +1,6 @@
 'use strict';
-import FB, {Facebook} from '../..';
-var expect = require('chai').expect;
+const {Facebook} = require('../..');
+const expect = require('chai').expect;
 
 describe('Facebook', function() {
 	describe('new Facebook()', function() {

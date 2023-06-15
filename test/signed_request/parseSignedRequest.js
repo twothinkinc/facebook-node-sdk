@@ -1,8 +1,8 @@
 'use strict';
+const {Facebook} = require('../..');
+
 var expect = require('chai').expect,
-	FB = require('../..').default,
 	omit = require('lodash.omit'),
-	defaultOptions = omit(FB.options(), 'appId'),
 	signature = 'U0_O1MqqNKUt32633zAkdd2Ce-jGVgRgJeRauyx_zC8',
 	app_secret = 'foo_app_secret',
 	payload = 'eyJvYXV0aF90b2tlbiI6ImZvb190b2tlbiIsImFsZ29yaXRobSI6IkhNQUMtU0hBMjU2IiwiaXNzdWVkX2F0IjozMjEsImNvZGUiOiJmb29fY29kZSIsInN0YXRlIjoiZm9vX3N0YXRlIiwidXNlcl9pZCI6MTIzLCJmb28iOiJiYXIifQ==',
@@ -17,14 +17,20 @@ var expect = require('chai').expect,
 	},
 	signedRequest = signature + '.' + payload;
 
+let FB;
+
 beforeEach(function() {
+	FB = new Facebook({ version: 'v10.0' });
+	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
 
 afterEach(function() {
+	nock.cleanAll();
+	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
-
+	
 describe('FB.parseSignedRequest', function() {
 	describe('FB.parseSignedRequest(signedRequest, app_secret)', function() {
 		describe('when app_secret is defined', function() {

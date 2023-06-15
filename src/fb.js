@@ -1,7 +1,7 @@
 'use strict';
 const debug = require('debug');
 const FormData = require('form-data');
-const needle = require('needle');
+const axios = require('axios');
 const URL = require('url');
 const QS = require('querystring');
 const crypto = require('crypto');
@@ -396,57 +396,76 @@ class Facebook {
 			};
 		}
 		if ( this.options('agent') ) {
-			requestOptions['agent'] = this.options('agent');
+			requestOptions['headers']['User-Agent'] = this.options('agent');
 		}
 
 		debugReq(method.toUpperCase() + ' ' + uri);
-		needle.request(
+		axios.request({
 			method,
-			uri,
-			postData,
-			requestOptions,
-			(error, response) => {
-				if ( error !== null ) {
-					if ( error === Object(error) && has(error, 'error') ) {
-						return cb(error);
-					}
-					return cb({error});
-				}
+			url: uri,
+			data: postData,
+			headers: requestOptions.headers
+		})
+		.then(response => {
+			debugFbDebug(`x-fb-trace-id: ${response.headers['x-fb-trace-id']}`);
+			debugFbDebug(`x-fb-rev: ${response.headers['x-fb-rev']}`);
+			debugFbDebug(`x-fb-debug: ${response.headers['x-fb-debug']}`);
 
-				debugFbDebug(`x-fb-trace-id: ${response.headers['x-fb-trace-id']}`);
-				debugFbDebug(`x-fb-rev: ${response.headers['x-fb-rev']}`);
-				debugFbDebug(`x-fb-debug: ${response.headers['x-fb-debug']}`);
+			let appUsage = parseResponseHeaderAppUsage(response.headers);
+			if ( appUsage !== null ) {
+				this._appUsage = buildRateLimitObjectFromJson(appUsage);
+			} else {
+				this._appUsage = emptyRateLimit;
+			}
 
-				let appUsage = parseResponseHeaderAppUsage(response.headers);
-				if ( appUsage !== null ) {
-					this._appUsage = buildRateLimitObjectFromJson(appUsage);
-				} else {
-					this._appUsage = emptyRateLimit;
-				}
+			let pageUsage = parseResponseHeaderPageUsage(response.headers);
+			if ( pageUsage !== null ) {
+				this._pageUsage = buildRateLimitObjectFromJson(pageUsage);
+			} else {
+				this._pageUsage = emptyRateLimit;
+			}
+			cb(response.data);
+		})
+		.catch(error => { 
+			if ( error === Object(error) && has(error, 'error') ) {
+				return cb(error);
+			}
+			return cb({error});
+		});
+		
+		// needle.request(
+		// 	method,
+		// 	uri,
+		// 	postData,
+		// 	requestOptions,
+		// 	(error, response) => {
+		// 		if ( error !== null ) {
+		// 			if ( error === Object(error) && has(error, 'error') ) {
+		// 				return cb(error);
+		// 			}
+		// 			return cb({error});
+		// 		}
 
-				let pageUsage = parseResponseHeaderPageUsage(response.headers);
-				if ( pageUsage !== null ) {
-					this._pageUsage = buildRateLimitObjectFromJson(pageUsage);
-				} else {
-					this._pageUsage = emptyRateLimit;
-				}
+		// 		debugFbDebug(`x-fb-trace-id: ${response.headers['x-fb-trace-id']}`);
+		// 		debugFbDebug(`x-fb-rev: ${response.headers['x-fb-rev']}`);
+		// 		debugFbDebug(`x-fb-debug: ${response.headers['x-fb-debug']}`);
 
-				let json;
-				try {
-					json = JSON.parse(response.body);
-				} catch (ex) {
-					// sometimes FB is has API errors that return HTML and a message
-					// of "Sorry, something went wrong". These are infrequent and unpredictable but
-					// let's not let them blow up our application.
-					json = {
-						error: {
-							code: 'JSONPARSE',
-							Error: ex
-						}
-					};
-				}
-				cb(json);
-			});
+		// 		let appUsage = parseResponseHeaderAppUsage(response.headers);
+		// 		if ( appUsage !== null ) {
+		// 			this._appUsage = buildRateLimitObjectFromJson(appUsage);
+		// 		} else {
+		// 			this._appUsage = emptyRateLimit;
+		// 		}
+
+		// 		let pageUsage = parseResponseHeaderPageUsage(response.headers);
+		// 		if ( pageUsage !== null ) {
+		// 			this._pageUsage = buildRateLimitObjectFromJson(pageUsage);
+		// 		} else {
+		// 			this._pageUsage = emptyRateLimit;
+		// 		}
+		// 		// json parsing is not needed with axios.
+		// 		cb(json);
+		// 	});
 	}
 
 	/**

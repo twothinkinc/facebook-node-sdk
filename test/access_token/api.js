@@ -1,19 +1,23 @@
 'use strict';
-var nock = require('nock'),
-	expect = require('chai').expect,
-	notError = require('../_supports/notError'),
-	FB = require('../..').default,
-	omit = require('lodash.omit'),
-	defaultOptions = omit(FB.options(), 'appId');
+var nock = require('nock');
+var	expect = require('chai').expect;
+var notError = require('../_supports/notError');
+const { Facebook } = require('../..');
+var omit = require('lodash.omit');
 
 nock.disableNetConnect();
 
+let FB;
+
 beforeEach(function() {
+	FB = new Facebook({ version: 'v10.0' });
+	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
 
 afterEach(function() {
 	nock.cleanAll();
+	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
 

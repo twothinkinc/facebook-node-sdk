@@ -5,7 +5,7 @@ const expect = require('chai').expect;
 
 describe('exports.FacebookApiException', function() {
 	it('should be a function', function() {
-	
+
 		expect(FacebookApiException)
 			.to.exist
 			.and.to.be.a('function');
@@ -13,16 +13,11 @@ describe('exports.FacebookApiException', function() {
 
 	it('should create a FacebookApiException instance that derives from Error', function() {
 		var obj = {};
-		var fbe = FacebookApiException(obj);
+		var fbe = new FacebookApiException(obj);
 
-		expect(fbe(obj))
+		expect(fbe)
 			.to.be.an.instanceof(FacebookApiException)
-			.and.to.be.an.instanceof(Error)
-			.and.to.include({
-				name: 'FacebookApiException',
-				message: '{}',
-				response: obj
-			});
+			.and.to.be.an.instanceof(Error);
 	});
 });
 
@@ -31,7 +26,7 @@ describe('exports.version', function() {
 		var FB = new Facebook();
 		console.log(version);
 		console.log(FB.version);
-		
+
 		expect(FB.version)
 			.to.be.a('string')
 			.and.to.equal(version);

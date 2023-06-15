@@ -1,19 +1,12 @@
 'use strict';
 
-function FacebookApiException(res) {
-	this.name = 'FacebookApiException';
-	this.message = JSON.stringify(res || {});
-	this.response = res;
-	Error.captureStackTrace(this, this.constructor.name);
-}
-
-FacebookApiException.prototype = Object.create(Error.prototype, {
-	constructor: {
-		value: FacebookApiException,
-		enumerable: false,
-		writable: true,
-		configurable: true
+class FacebookApiException extends Error {
+	constructor(res) {
+		super(res); // (1)
+		this.name = 'FacebookApiException'; // (2)
+		this.message = JSON.stringify(res || {});
+		this.response = res;
 	}
-});
+}
 
 module.exports = FacebookApiException;

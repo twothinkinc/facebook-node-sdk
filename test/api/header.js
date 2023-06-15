@@ -2,7 +2,7 @@
 var nock = require('nock');
 var	expect = require('chai').expect;
 var notError = require('../_supports/notError');
-const { Facebook } = require('../..');
+const {Facebook} = require('../..');
 var omit = require('lodash.omit');
 
 nock.disableNetConnect();
@@ -10,7 +10,7 @@ nock.disableNetConnect();
 let FB;
 
 beforeEach(function() {
-	FB = new Facebook({ version: 'v10.0' });
+	FB = new Facebook({version: 'v10.0'});
 	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
@@ -26,7 +26,7 @@ describe('FB.api', function() {
 		describe('FB.getAppUsage()', function() {
 			it('should be updated', function(done) {
 				nock('https://graph.facebook.com:443')
-					.get('/v2.5/4')
+					.get('/v10.0/4')
 					.reply(200, {}, {
 						'X-App-Usage': '{"call_count":50, "total_time":60, "total_cputime":70}'
 					});
@@ -43,7 +43,7 @@ describe('FB.api', function() {
 
 			it('should be set back to 0 if no header sent', function(done) {
 				nock('https://graph.facebook.com:443')
-					.get('/v2.5/5')
+					.get('/v10.0/5')
 					.reply(200, {});
 
 				FB.api('5', function(result) {
@@ -60,7 +60,7 @@ describe('FB.api', function() {
 		describe('FB.getPageUsage()', function() {
 			it('should be updated', function(done) {
 				nock('https://graph.facebook.com:443')
-					.get('/v2.5/4')
+					.get('/v10.0/4')
 					.reply(200, {}, {
 						'X-Page-Usage': '{"call_count":10, "total_time":20, "total_cputime":30}'
 					});
@@ -77,7 +77,7 @@ describe('FB.api', function() {
 
 			it('should be set back to 0 if no header sent', function(done) {
 				nock('https://graph.facebook.com:443')
-					.get('/v2.5/5')
+					.get('/v10.0/5')
 					.reply(200, {});
 				FB.api('5', function(result) {
 					notError(result);

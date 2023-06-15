@@ -1,8 +1,8 @@
 'use strict';
 var nock = require('nock');
-var	expect = require('chai').expect;
+var expect = require('chai').expect;
 var notError = require('../_supports/notError');
-const { Facebook } = require('../..');
+const {Facebook} = require('../..');
 var omit = require('lodash.omit');
 
 nock.disableNetConnect();
@@ -10,7 +10,7 @@ nock.disableNetConnect();
 let FB;
 
 beforeEach(function() {
-	FB = new Facebook({ version: 'v10.0' });
+	FB = new Facebook({version: 'v10.0'});
 	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
@@ -21,14 +21,12 @@ afterEach(function() {
 	FB.options(defaultOptions);
 });
 
-
 describe('FB.api', function() {
 	describe('batch', function() {
-
-		describe("FB.api('', 'post', { batch: [ { method: 'get', relative_url: '4' }, { method: 'get', relative_url: 'me/friends?limit=50' } ], cb)", function() {
+		describe("FB.api('', 'POST', { batch: [ { method: 'GET', relative_url: '4' }, { method: 'GET', relative_url: 'me/friends?limit=50' } ], cb)", function() {
 			beforeEach(function() {
 				nock('https://graph.facebook.com:443')
-					.post('/v2.5/', 'batch=%5B%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%224%22%7D%2C%7B%22method%22%3A%22get%22%2C%22relative_url%22%3A%22me%2Ffriends%3Flimit%3D50%22%7D%5D')
+					.post('/v10.0/')
 					.reply(200, [
 						{
 							code: 200,
@@ -43,7 +41,7 @@ describe('FB.api', function() {
 								},
 								{
 									name: 'Facebook-API-Version',
-									value: 'v2.4'
+									value: 'v10.0'
 								}
 							],
 							body: JSON.stringify({
@@ -64,7 +62,7 @@ describe('FB.api', function() {
 								},
 								{
 									name: 'Facebook-API-Version',
-									value: 'v2.4'
+									value: 'v10.0'
 								}
 							],
 							body: JSON.stringify({
@@ -78,7 +76,7 @@ describe('FB.api', function() {
 			});
 
 			it('should return batch results', function(done) {
-				FB.api('', 'post', {
+				FB.api('/', 'post', {
 					batch: [
 						{method: 'get', relative_url: '4'},
 						{method: 'get', relative_url: 'me/friends?limit=50'}

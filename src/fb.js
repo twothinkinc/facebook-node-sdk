@@ -25,7 +25,7 @@ var {version} = require('../package.json'),
 		appSecret: null,
 		appSecretProof: null,
 		beta: false,
-		version: 'v2.5',
+		version: 'v10.0',
 		timeout: null,
 		scope: null,
 		redirectUri: null,
@@ -42,13 +42,13 @@ var {version} = require('../package.json'),
 		return has(defaultOptions, key);
 	},
 	parseResponseHeaderAppUsage = function(header) {
-		if ( !has(header, 'x-app-usage') ) {
+		if (!has(header, 'x-app-usage')) {
 			return null;
 		}
 		return JSON.parse(header['x-app-usage']);
 	},
 	parseResponseHeaderPageUsage = function(header) {
-		if ( !has(header, 'x-page-usage') ) {
+		if (!has(header, 'x-page-usage')) {
 			return null;
 		}
 		return JSON.parse(header['x-page-usage']);
@@ -65,16 +65,16 @@ var {version} = require('../package.json'),
 
 		// https://developers.facebook.com/bugs/1925316137705574/
 		// fields=[] as json is not officialy supported, however the README has made people mistakenly do so
-		if ( Array.isArray(params.fields) ) {
+		if (Array.isArray(params.fields)) {
 			log(`The fields param should be a comma separated list, not an array, try changing it to: ${JSON.stringify(params.fields)}.join(',')`);
 		}
 
-		for ( let key in params ) {
+		for (let key in params) {
 			let value = params[key];
-			if ( value && typeof value !== 'string' ) {
+			if (value && typeof value !== 'string') {
 				value = JSON.stringify(value);
 			}
-			if ( value !== undefined ) {
+			if (value !== undefined) {
 				data[key] = value;
 			}
 		}
@@ -85,28 +85,28 @@ var {version} = require('../package.json'),
 		var data = {},
 			multipart = false;
 
-		for ( let key in params ) {
+		for (let key in params) {
 			let value = params[key];
-			if ( value && typeof value !== 'string' ) {
+			if (value && typeof value !== 'string') {
 				let val = typeof value === 'object' && has(value, 'value') && has(value, 'options') ? value.value : value;
-				if ( Buffer.isBuffer(val) ) {
+				if (Buffer.isBuffer(val)) {
 					multipart = true;
-				} else if ( typeof val.read === 'function' && typeof val.pipe === 'function' && val.readable ) {
+				} else if (typeof val.read === 'function' && typeof val.pipe === 'function' && val.readable) {
 					multipart = true;
 				} else {
 					value = JSON.stringify(value);
 				}
 			}
-			if ( value !== undefined ) {
+			if (value !== undefined) {
 				data[key] = value;
 			}
 		}
 
-		if ( multipart ) {
+		if (multipart) {
 			const formData = new FormData();
 			for (const key in data) {
 				const value = data[key];
-				if ( typeof value === 'object' && has(value, 'value') && has(value, 'options') ) {
+				if (typeof value === 'object' && has(value, 'value') && has(value, 'options')) {
 					formData.append(key, value.value, value.options);
 				} else {
 					formData.append(key, value);
@@ -123,15 +123,15 @@ var {version} = require('../package.json'),
 		return hmac.digest('hex');
 	},
 	base64UrlDecode = function(str) {
-		var base64String = str.replace(/\-/g, '+').replace(/_/g, '/');
-		var buffer = new Buffer(base64String, 'base64');
+		var base64String = str.replace(/-/g, '+').replace(/_/g, '/');
+		var buffer = Buffer.from(base64String, 'base64');
 		return buffer.toString('utf8');
 	},
 	nodeifyCallback = function(originalCallback) {
 		// normalizes the callback parameters so that the
 		// first parameter is always error and second is response
 		return function(res) {
-			if ( !res || res.error ) {
+			if (!res || res.error) {
 				originalCallback(new FacebookApiException(res));
 			} else {
 				originalCallback(null, res);
@@ -145,13 +145,13 @@ const oauthRequest = Symbol('oauthRequest');
 
 class Facebook {
 	constructor(opts, _internalInherit) {
-		if ( _internalInherit instanceof Facebook ) {
+		if (_internalInherit instanceof Facebook) {
 			this[_opts] = Object.create(_internalInherit[_opts]);
 		} else {
 			this[_opts] = Object.create(defaultOptions);
 		}
 
-		if ( typeof opts === 'object' ) {
+		if (typeof opts === 'object') {
 			this.options(opts);
 		}
 
@@ -198,11 +198,11 @@ class Facebook {
 
 		let ret;
 
-		if ( args.length > 0 && typeof args[args.length - 1] !== 'function' ) {
+		if (args.length > 0 && typeof args[args.length - 1] !== 'function') {
 			let Promise = this.options('Promise');
 			ret = new Promise((resolve, reject) => {
 				args.push((res) => {
-					if ( !res || res.error ) {
+					if (!res || res.error) {
 						reject(new FacebookApiException(res));
 					} else {
 						resolve(res);
@@ -257,7 +257,7 @@ class Facebook {
 		//
 		//
 
-		if ( args.length > 0 ) {
+		if (args.length > 0) {
 			let originalCallback = args.pop();
 			args.push(typeof originalCallback === 'function' ? nodeifyCallback(originalCallback) : originalCallback);
 		}
@@ -290,17 +290,17 @@ class Facebook {
 			params,
 			cb;
 
-		if ( typeof path !== 'string' ) {
+		if (typeof path !== 'string') {
 			throw new Error(`Path is of type ${typeof path}, not string`);
 		}
 
-		while ( next ) {
+		while (next) {
 			let type = typeof next;
-			if ( type === 'string' && !method ) {
+			if (type === 'string' && !method) {
 				method = next.toLowerCase();
-			} else if ( type === 'function' && !cb ) {
+			} else if (type === 'function' && !cb) {
 				cb = next;
-			} else if ( type === 'object' && !params ) {
+			} else if (type === 'object' && !params) {
 				params = next;
 			} else {
 				throw new TypeError('Invalid argument passed to FB.api(): ' + next);
@@ -312,11 +312,11 @@ class Facebook {
 		params = params || {};
 
 		// remove prefix slash if one is given, as it's already in the base url
-		if ( path[0] === '/' ) {
+		if (path[0] === '/') {
 			path = path.substr(1);
 		}
 
-		if ( METHODS.indexOf(method) < 0 ) {
+		if (METHODS.indexOf(method) < 0) {
 			throw new TypeError('Invalid method passed to FB.api(): ' + method);
 		}
 
@@ -340,19 +340,19 @@ class Facebook {
 			formHeaders,
 			requestOptions;
 
-		cb = cb || function() {};
-		if ( !params.access_token ) {
-			if ( this.options('accessToken') ) {
+		cb = cb || function() { };
+		if (!params.access_token) {
+			if (this.options('accessToken')) {
 				params.access_token = this.options('accessToken');
-				if ( this.options('appSecret') ) {
+				if (this.options('appSecret')) {
 					params.appsecret_proof = this.options('appSecretProof');
 				}
 			}
-		} else if ( !params.appsecret_proof && this.options('appSecret') ) {
+		} else if (!params.appsecret_proof && this.options('appSecret')) {
 			params.appsecret_proof = getAppSecretProof(params.access_token, this.options('appSecret'));
 		}
 
-		if ( !/^v\d+\.\d+\//.test(path) ) {
+		if (!/^v\d+\.\d+\//.test(path)) {
 			path = this.options('version') + '/' + path;
 		}
 		uri = `https://graph.${this.options('beta') ? 'beta.' : ''}facebook.com/${path}`;
@@ -361,12 +361,12 @@ class Facebook {
 		delete parsedUri.search;
 		parsedQuery = QS.parse(parsedUri.query);
 
-		if ( method === 'post' ) {
-			if ( params.access_token ) {
+		if (method === 'post') {
+			if (params.access_token) {
 				parsedQuery.access_token = params.access_token;
 				delete params.access_token;
 
-				if ( params.appsecret_proof ) {
+				if (params.appsecret_proof) {
 					parsedQuery.appsecret_proof = params.appsecret_proof;
 					delete params.appsecret_proof;
 				}
@@ -374,7 +374,7 @@ class Facebook {
 
 			({data: postData, formHeaders} = postParamData(params));
 		} else {
-			for ( let key in params ) {
+			for (let key in params) {
 				parsedQuery[key] = params[key];
 			}
 		}
@@ -383,19 +383,19 @@ class Facebook {
 		uri = URL.format(parsedUri);
 
 		requestOptions = {parse: false};
-		if ( this.options('proxy') ) {
+		if (this.options('proxy')) {
 			requestOptions['proxy'] = this.options('proxy');
 		}
-		if ( this.options('timeout') ) {
+		if (this.options('timeout')) {
 			requestOptions['response_timeout'] = this.options('timeout');
 		}
-		if ( this.options('userAgent') ) {
+		if (this.options('userAgent')) {
 			requestOptions['headers'] = {
 				'User-Agent': this.options('userAgent'),
 				...formHeaders
 			};
 		}
-		if ( this.options('agent') ) {
+		if (this.options('agent')) {
 			requestOptions['headers']['User-Agent'] = this.options('agent');
 		}
 
@@ -406,33 +406,33 @@ class Facebook {
 			data: postData,
 			headers: requestOptions.headers
 		})
-		.then(response => {
-			debugFbDebug(`x-fb-trace-id: ${response.headers['x-fb-trace-id']}`);
-			debugFbDebug(`x-fb-rev: ${response.headers['x-fb-rev']}`);
-			debugFbDebug(`x-fb-debug: ${response.headers['x-fb-debug']}`);
+			.then(response => {
+				debugFbDebug(`x-fb-trace-id: ${response.headers['x-fb-trace-id']}`);
+				debugFbDebug(`x-fb-rev: ${response.headers['x-fb-rev']}`);
+				debugFbDebug(`x-fb-debug: ${response.headers['x-fb-debug']}`);
 
-			let appUsage = parseResponseHeaderAppUsage(response.headers);
-			if ( appUsage !== null ) {
-				this._appUsage = buildRateLimitObjectFromJson(appUsage);
-			} else {
-				this._appUsage = emptyRateLimit;
-			}
+				let appUsage = parseResponseHeaderAppUsage(response.headers);
+				if (appUsage !== null) {
+					this._appUsage = buildRateLimitObjectFromJson(appUsage);
+				} else {
+					this._appUsage = emptyRateLimit;
+				}
 
-			let pageUsage = parseResponseHeaderPageUsage(response.headers);
-			if ( pageUsage !== null ) {
-				this._pageUsage = buildRateLimitObjectFromJson(pageUsage);
-			} else {
-				this._pageUsage = emptyRateLimit;
-			}
-			cb(response.data);
-		})
-		.catch(error => { 
-			if ( error === Object(error) && has(error, 'error') ) {
-				return cb(error);
-			}
-			return cb({error});
-		});
-		
+				let pageUsage = parseResponseHeaderPageUsage(response.headers);
+				if (pageUsage !== null) {
+					this._pageUsage = buildRateLimitObjectFromJson(pageUsage);
+				} else {
+					this._pageUsage = emptyRateLimit;
+				}
+				cb(response.data);
+			})
+			.catch(error => {
+				if (error === Object(error) && has(error, 'error')) {
+					return cb(error);
+				}
+				return cb({error});
+			});
+
 		// needle.request(
 		// 	method,
 		// 	uri,
@@ -492,25 +492,25 @@ class Facebook {
 			base64Digest,
 			base64UrlDigest;
 
-		if ( !signedRequest ) {
+		if (!signedRequest) {
 			debugSig('invalid signedRequest');
 			return;
 		}
 
-		if ( !appSecret ) {
+		if (!appSecret) {
 			throw new Error('appSecret required');
 		}
 
 		split = signedRequest.split('.');
 
-		if ( split.length !== 2 ) {
+		if (split.length !== 2) {
 			debugSig('invalid signedRequest');
 			return;
 		}
 
 		[encodedSignature, encodedEnvelope] = split;
 
-		if ( !encodedSignature || !encodedEnvelope ) {
+		if (!encodedSignature || !encodedEnvelope) {
 			debugSig('invalid signedRequest');
 			return;
 		}
@@ -522,7 +522,7 @@ class Facebook {
 			return;
 		}
 
-		if (!(envelope && has(envelope, 'algorithm') && envelope.algorithm.toUpperCase() === 'HMAC-SHA256') ) {
+		if (!(envelope && has(envelope, 'algorithm') && envelope.algorithm.toUpperCase() === 'HMAC-SHA256')) {
 			debugSig(envelope.algorithm + ' is not a supported algorithm, must be one of [HMAC-SHA256]');
 			return;
 		}
@@ -537,7 +537,7 @@ class Facebook {
 		// Replace illegal characters
 		base64UrlDigest = base64UrlDigest.replace(/\+/g, '-').replace(/\//g, '_');
 
-		if ( base64UrlDigest !== encodedSignature ) {
+		if (base64UrlDigest !== encodedSignature) {
 			debugSig('invalid signature');
 			return;
 		}
@@ -561,27 +561,27 @@ class Facebook {
 			displayQuery = '',
 			stateQuery = '';
 
-		if ( !clientId ) {
+		if (!clientId) {
 			throw new Error('client_id required');
 		}
 
-		if ( scope ) {
+		if (scope) {
 			scopeQuery = '&scope=' + encodeURIComponent(scope);
 		}
 
-		if ( display ) {
+		if (display) {
 			displayQuery = '&display=' + display;
 		}
 
-		if ( state ) {
+		if (state) {
 			stateQuery = '&state=' + state;
 		}
 
 		return `https://www.facebook.com/${this.options('version')}/dialog/oauth`
 			+ '?response_type=' + (opt.responseType || opt.response_type || 'code')
-			+  scopeQuery
-			+  displayQuery
-			+  stateQuery
+			+ scopeQuery
+			+ displayQuery
+			+ stateQuery
 			+ '&redirect_uri=' + encodeURIComponent(redirectUri)
 			+ '&client_id=' + clientId;
 	}
@@ -589,22 +589,22 @@ class Facebook {
 	options(keyOrOptions) {
 		// this method does not exist in the fb js sdk
 		var o = this[_opts];
-		if ( !keyOrOptions ) {
+		if (!keyOrOptions) {
 			return o;
 		}
-		if ( isString(keyOrOptions) ) {
+		if (isString(keyOrOptions)) {
 			return isValidOption(keyOrOptions) && keyOrOptions in o ? o[keyOrOptions] : null;
 		}
-		for ( let key in o ) {
-			if ( isValidOption(key) && key in o && has(keyOrOptions, key) ) {
+		for (let key in o) {
+			if (isValidOption(key) && key in o && has(keyOrOptions, key)) {
 				o[key] = keyOrOptions[key];
 				switch (key) {
 				case 'appSecret':
 				case 'accessToken':
 					o.appSecretProof =
 						(o.appSecret && o.accessToken) ?
-						getAppSecretProof(o.accessToken, o.appSecret) :
-						null;
+							getAppSecretProof(o.accessToken, o.appSecret) :
+							null;
 					break;
 				}
 			}
@@ -643,4 +643,4 @@ class Facebook {
 	}
 }
 
-module.exports = { Facebook, FacebookApiException, version };
+module.exports = {Facebook, FacebookApiException, version};

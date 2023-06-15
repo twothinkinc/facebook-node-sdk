@@ -1,4 +1,6 @@
 {
-  "presets": [["env", {"targets": {"node": 16}}], "stage-0"],
-  "plugins": ["transform-decorators-legacy", "transform-runtime"]
+  "presets": ["@babel/preset-env"],
+  "plugins": [
+    [ "@babel/plugin-proposal-decorators", { "legacy": true }]
+  ]
 }

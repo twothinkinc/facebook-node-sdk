@@ -1,8 +1,7 @@
 'use strict';
 var nock = require('nock');
 var	expect = require('chai').expect;
-var notError = require('../_supports/notError');
-const { Facebook } = require('../..');
+const {Facebook} = require('../..');
 var omit = require('lodash.omit');
 
 nock.disableNetConnect();
@@ -10,7 +9,7 @@ nock.disableNetConnect();
 let FB;
 
 beforeEach(function() {
-	FB = new Facebook({ version: 'v10.0' });
+	FB = new Facebook({version: 'v10.0'});
 	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
@@ -23,7 +22,7 @@ afterEach(function() {
 
 
 describe('FB.getLoginUrl', function() {
-	var base = 'https://www.facebook.com/v2.5/dialog/oauth';
+	var base = 'https://www.facebook.com/v10.0/dialog/oauth';
 	describe('when no options are set', function() {
 		describe('FB.getLoginUrl({}})', function() {
 			it('should throw', function() {

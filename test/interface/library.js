@@ -1,6 +1,14 @@
 'use strict';
 const {Facebook} = require('../..');
 const expect = require('chai').expect;
+const omit = require('lodash.omit');
+let FB;
+
+beforeEach(function() {
+	FB = new Facebook({version: 'v10.0'});
+	const defaultOptions = omit(FB.options(), 'appId');
+	FB.options(defaultOptions);
+});
 
 describe('Facebook', function() {
 	describe('new Facebook()', function() {
@@ -18,6 +26,7 @@ describe('Facebook', function() {
 
 		it('should not share options with FB', function() {
 			var fb = new Facebook({appId: '42'});
+
 			expect(fb.options('appId')).to.not.equal(FB.options('appId'));
 		});
 	});

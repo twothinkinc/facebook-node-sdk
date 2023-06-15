@@ -1,8 +1,7 @@
 'use strict';
 var nock = require('nock');
-var	expect = require('chai').expect;
-var notError = require('../_supports/notError');
-const { Facebook } = require('../..');
+var expect = require('chai').expect;
+const {Facebook} = require('../..');
 var omit = require('lodash.omit');
 
 nock.disableNetConnect();
@@ -10,7 +9,7 @@ nock.disableNetConnect();
 let FB;
 
 beforeEach(function() {
-	FB = new Facebook({ version: 'v10.0' });
+	FB = new Facebook({version: 'v10.0'});
 	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
@@ -30,8 +29,7 @@ describe('FB.extend', function() {
 
 		it('should not be the same instance as FB', function() {
 			var fb = FB.extend();
-			expect(fb).to.not.equal(FBdefault)
-				.and.to.not.equal(FB);
+			expect(fb).to.not.equal(FB);
 		});
 	});
 

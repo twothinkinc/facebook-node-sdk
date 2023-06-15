@@ -1,6 +1,8 @@
 'use strict';
 const {Facebook} = require('../..');
 
+const nock = require('nock');
+
 var expect = require('chai').expect,
 	omit = require('lodash.omit'),
 	signature = 'U0_O1MqqNKUt32633zAkdd2Ce-jGVgRgJeRauyx_zC8',
@@ -20,7 +22,7 @@ var expect = require('chai').expect,
 let FB;
 
 beforeEach(function() {
-	FB = new Facebook({ version: 'v10.0' });
+	FB = new Facebook({version: 'v10.0'});
 	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
@@ -30,7 +32,7 @@ afterEach(function() {
 	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
-	
+
 describe('FB.parseSignedRequest', function() {
 	describe('FB.parseSignedRequest(signedRequest, app_secret)', function() {
 		describe('when app_secret is defined', function() {

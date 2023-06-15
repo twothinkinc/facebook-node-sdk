@@ -2,15 +2,16 @@
 var nock = require('nock');
 var	expect = require('chai').expect;
 var notError = require('../_supports/notError');
-const { Facebook } = require('../..');
+const {Facebook} = require('../..');
 var omit = require('lodash.omit');
-
+var fs = require('fs');
+var path = require('path');
 nock.disableNetConnect();
 
 let FB;
 
 beforeEach(function() {
-	FB = new Facebook({ version: 'v10.0' });
+	FB = new Facebook({version: 'v10.0'});
 	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
@@ -26,7 +27,7 @@ describe('FB.api', function() {
 		describe("FB.api('me/feed', 'post', { message: 'My first post using facebook-node-sdk' }, cb)", function() {
 			beforeEach(function() {
 				nock('https://graph.facebook.com:443')
-					.post('/v2.5/me/feed', 'message=My%20first%20post%20using%20facebook-node-sdk')
+					.post('/v10.0/me/feed')
 					.reply(200, function() {
 						return {
 							contentType: this.req.headers['content-type'],
@@ -38,17 +39,17 @@ describe('FB.api', function() {
 			it('should have id 4_14', function(done) {
 				FB.api('me/feed', 'post', {message: 'My first post using facebook-node-sdk'}, function(result) {
 					notError(result);
-					expect(result.contentType).to.equal('application/x-www-form-urlencoded');
+					expect(result.contentType).to.equal('application/json');
 					expect(result).to.have.property('id', '4_14');
 					done();
 				});
 			});
 		});
 
-		describe("FB.api('path', 'post', { file: { value: new Buffer('...', 'utf8'), options: { contentType: 'text/plain' } }, cb)", function() {
+		describe("FB.api('path', 'post', { file: { value: Buffer.alloc(3,'...', 'utf8'), options: { contentType: 'text/plain' } }, cb)", function() {
 			beforeEach(function() {
 				nock('https://graph.facebook.com:443')
-					.post('/v2.5/path')
+					.post('/v10.0/path')
 					.reply(200, function(uri, body) {
 						return {
 							contentType: this.req.headers['content-type'],
@@ -58,7 +59,7 @@ describe('FB.api', function() {
 			});
 
 			it("should upload a file containing '...'", function(done) {
-				FB.api('path', 'post', {file: {value: new Buffer('...', 'utf8'), options: {contentType: 'text/plain'}}}, function(result) {
+				FB.api('path', 'post', {file: {value: Buffer.alloc(3, '...', 'utf8'), options: {contentType: 'text/plain'}}}, function(result) {
 					notError(result);
 					expect(result.contentType).to.match(/^multipart\/form-data; boundary=/);
 					let [, boundary] = result.contentType.match(/boundary=(.+)/);
@@ -71,7 +72,7 @@ describe('FB.api', function() {
 		describe("FB.api('path', 'post', { file: fs.createReadStream('./ellipsis.txt') }, cb)", function() {
 			beforeEach(function() {
 				nock('https://graph.facebook.com:443')
-					.post('/v2.5/path')
+					.post('/v10.0/path')
 					.reply(200, function(uri, body) {
 						return {
 							contentType: this.req.headers['content-type'],

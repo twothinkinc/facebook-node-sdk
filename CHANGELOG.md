@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## Alembic-3.0.0
+
+* Update all dependencies for 2023. This library was very, very old
+* New minimum api version `v10.0`
+* Remove neddle for Axios
+
 ## 3.0.0
 
 * Added `getAppUsage` API

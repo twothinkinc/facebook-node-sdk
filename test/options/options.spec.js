@@ -2,7 +2,7 @@
 var nock = require('nock');
 var	expect = require('chai').expect;
 var notError = require('../_supports/notError');
-const { Facebook,version } = require('../..');
+const {Facebook, version} = require('../..');
 var omit = require('lodash.omit');
 
 nock.disableNetConnect();
@@ -10,7 +10,7 @@ nock.disableNetConnect();
 let FB;
 
 beforeEach(function() {
-	FB = new Facebook({ version: 'v10.0' });
+	FB = new Facebook({version: 'v10.0'});
 	const defaultOptions = omit(FB.options(), 'appId');
 	FB.options(defaultOptions);
 });
@@ -38,7 +38,7 @@ describe('FB.options', function() {
 		});
 
 		it('Should make use graph.facebook when beta is false', function(done) {
-			var expectedRequest = nock('https://graph.facebook.com:443').get('/v2.5/4').reply(200, {});
+			var expectedRequest = nock('https://graph.facebook.com:443').get('/v10.0/4').reply(200, {});
 
 			FB.options({beta: false});
 
@@ -51,7 +51,7 @@ describe('FB.options', function() {
 		});
 
 		it('Should make use graph.beta.facebook when beta is true', function(done) {
-			var expectedRequest = nock('https://graph.beta.facebook.com:443').get('/v2.5/4').reply(200, {});
+			var expectedRequest = nock('https://graph.beta.facebook.com:443').get('/v10.0/4').reply(200, {});
 
 			FB.options({beta: true});
 
@@ -67,7 +67,7 @@ describe('FB.options', function() {
 	describe('userAgent', function() {
 		beforeEach(function() {
 			nock('https://graph.facebook.com:443')
-				.get('/v2.5/4')
+				.get('/4')
 				.reply(function() {
 					return {
 						userAgent: this.req.headers['user-agent']
@@ -75,15 +75,16 @@ describe('FB.options', function() {
 				});
 		});
 
-		it('Should default to thuzi_nodejssdk/' + version, function() {
+		it('Should default to thuzi_nodejssdk/' + version, function(done) {
 			expect(FB.options('userAgent')).to.equal('thuzi_nodejssdk/' + version);
+			done();
 		});
 
 		it('Should default the userAgent for FB.api requests to thuzi_nodejssdk/' + version, function(done) {
 			FB.api('/4', function(result) {
 				notError(result);
+				console.log(result);
 				expect(result.userAgent).to.equal('thuzi_nodejssdk/' + version);
-
 				done();
 			});
 		});
@@ -101,8 +102,8 @@ describe('FB.options', function() {
 	});
 
 	describe('version', function() {
-		it('Should default version to v2.5', function() {
-			expect(FB.options('version')).to.equal('v2.5');
+		it('Should default version to v10.0', function() {
+			expect(FB.options('version')).to.equal('v10.0');
 		});
 
 		it('Should change the version used in FB.api requests', function(done) {
@@ -149,10 +150,11 @@ describe('FB.options', function() {
 			});
 		});
 
-		it('Should change the version used in FB.getLoginUrl', function() {
+		it('Should change the version used in FB.getLoginUrl', function(done) {
 			FB.options({version: 'v2.9'});
 			expect(FB.getLoginUrl({appId: 'app_id'}))
 				.to.equal('https://www.facebook.com/v2.9/dialog/oauth?response_type=code&redirect_uri=https%3A%2F%2Fwww.facebook.com%2Fconnect%2Flogin_success.html&client_id=app_id');
+			done();
 		});
 	});
 });
